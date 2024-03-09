@@ -24,13 +24,9 @@
                                                 Belum Aktif
                                             <?php endif; ?>
                                         </li>
-
-                                        <li class="list-group-item">
-                                            <span class="badge badge-<?= ($user->name == 'admin') ? 'success' : 'warning'; ?>"><?= $user->name; ?></span>
-                                        </li>
                                         <li class="list-group-item">
                                             <small>
-                                                <a href="<?= base_url('user_managamen'); ?>">&laquo; Back</a>
+                                                <a href="<?= base_url('dashboard'); ?>">&laquo; Kembali</a>
                                             </small>
                                         </li>
                                     </ul>

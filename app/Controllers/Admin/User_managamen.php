@@ -23,14 +23,13 @@ class User_managamen extends BaseController
         echo view('Template/Sidebar', $data);
         echo view('Admin/User_managamen', $data);
         echo view('Template/Footer');
-
     }
     public function detail($id = 0)
     {
         $data['title'] = 'User Detail';
         $db = \Config\Database::connect();
         $builder = $db->table('users');
-        $builder->select('users.id as userid, username, email, name, fullname, user_image');
+        $builder->select('users.id as userid, username, email, name, fullname, user_image, created_at, active');
         $builder->join('auth_groups_users', 'auth_groups_users.user_id = users.id');
         $builder->join('auth_groups', 'auth_groups.id = auth_groups_users.group_id');
         $builder->where('users.id', $id);
@@ -45,7 +44,23 @@ class User_managamen extends BaseController
         echo view('Template/Sidebar', $data);
         echo view('Admin/Detail', $data);
         echo view('Template/Footer');
-
     }
+    public function edit($id = 0)
+    {
+        $db = \Config\Database::connect();
+        $builder = $db->table('users');
+        $builder->where('id', $id);
+        $builder->update($_POST);
 
+        return redirect()->to('/user_managamen');
+    }
+    public function delete($id = 0)
+    {
+        $db = \Config\Database::connect();
+        $builder = $db->table('users');
+        $builder->where('id', $id);
+        $builder->delete();
+
+        return redirect()->to('/user_managamen');
+    }
 }
