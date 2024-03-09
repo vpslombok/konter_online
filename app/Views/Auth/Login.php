@@ -9,7 +9,7 @@
 
         <div class="card card-outline card-primary">
             <div class="card-header text-center">
-                <a href="../../index2.html" class="h1"><b>Login Aplikasi</a>
+                <a href="" class="h1"><b>Login Konter Online</a>
             </div>
             <div class="card-body">
                 <!-- Tampilkan SweetAlert2 untuk pesan sukses atau error -->
