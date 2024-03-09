@@ -1,0 +1,4 @@
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/xayjyaqu/konter.bael.my.id/
+    - /bin/cp -r * $DEPLOYPATH
