@@ -10,28 +10,7 @@
                 <a href="" class="h1"><?= lang('Auth.resetYourPassword') ?></a>
             </div>
             <div class="card-body">
-                <!-- Tampilkan SweetAlert2 untuk pesan sukses atau error -->
-                <?php if (session()->getFlashdata('success')) : ?>
-                    <script>
-                        Swal.fire({
-                            title: 'Sukses',
-                            text: '<?= session()->getFlashdata('success') ?>',
-                            icon: 'success',
-                            confirmButtonColor: '#3085d6',
-                            confirmButtonText: 'OK'
-                        });
-                    </script>
-                <?php elseif (session()->getFlashdata('error')) : ?>
-                    <script>
-                        Swal.fire({
-                            title: 'Error',
-                            text: '<?= session()->getFlashdata('error') ?>',
-                            icon: 'error',
-                            confirmButtonColor: '#3085d6',
-                            confirmButtonText: 'OK'
-                        });
-                    </script>
-                <?php endif; ?>
+            <?= view('Myth\Auth\Views\_message_block') ?>
 
                 <p class="login-box-msg"><?= lang('Auth.enterCodeEmailPassword') ?></p>
                 <form action="<?= url_to('reset-password') ?>" method="post">

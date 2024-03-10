@@ -9,29 +9,7 @@
         </div>
         <div class="card">
             <div class="card-body register-card-body">
-                <!-- Tampilkan SweetAlert2 untuk pesan sukses atau error -->
-
-                <?php if (session()->getFlashdata('success')) : ?>
-                    <script>
-                        Swal.fire({
-                            title: 'Sukses',
-                            text: '<?= session()->getFlashdata('success') ?>',
-                            icon: 'success',
-                            confirmButtonColor: '#3085d6',
-                            confirmButtonText: 'OK'
-                        });
-                    </script>
-                <?php elseif (session()->getFlashdata('error')) : ?>
-                    <script>
-                        Swal.fire({
-                            title: 'Error',
-                            text: '<?= session()->getFlashdata('error') ?>',
-                            icon: 'error',
-                            confirmButtonColor: '#3085d6',
-                            confirmButtonText: 'OK'
-                        });
-                    </script>
-                <?php endif; ?>
+            <?= view('Myth\Auth\Views\_message_block') ?>
                 <p class="login-box-msg">Silahkan Isi Form Di Bawah Ini</p>
                 <form action="<?= url_to('register') ?>" method="post">
                     <?= csrf_field() ?>

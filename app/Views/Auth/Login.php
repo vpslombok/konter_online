@@ -2,8 +2,6 @@
 
 <?= $this->section('content'); ?>
 
-
-
 <body class="hold-transition login-page">
     <div class="login-box">
 
@@ -12,36 +10,15 @@
                 <a href="" class="h1"><b>Login Konter Online</a>
             </div>
             <div class="card-body">
-                <!-- Tampilkan SweetAlert2 untuk pesan sukses atau error -->
-                <?php if (session()->getFlashdata('success')) : ?>
-                    <script>
-                        Swal.fire({
-                            title: 'Sukses',
-                            text: '<?= session()->getFlashdata('success') ?>',
-                            icon: 'success',
-                            confirmButtonColor: '#3085d6',
-                            confirmButtonText: 'OK'
-                        });
-                    </script>
-                <?php elseif (session()->getFlashdata('error')) : ?>
-                    <script>
-                        Swal.fire({
-                            title: 'Error',
-                            text: '<?= session()->getFlashdata('error') ?>',
-                            icon: 'error',
-                            confirmButtonColor: '#3085d6',
-                            confirmButtonText: 'OK'
-                        });
-                    </script>
-                <?php endif; ?>
-
+            <?= view('Myth\Auth\Views\_message_block') ?>
+            
                 <p class="login-box-msg">Selamat datang</p>
                 <form action="<?= url_to('login') ?>" method="post">
                     <?= csrf_field() ?>
 
                     <?php if ($config->validFields === ['email']) : ?>
                         <div class="input-group mb-3">
-                            <input type="email" class="form-control <?php if (session('errors.login')) : ?>is-invalid<?php endif ?>" name="login" placeholder="<?= lang('Auth.email') ?>">
+                            <input type="email" class="form-control <?php if (session('errors.login')) : ?>is-invalid<?php endif ?>" name="login" placeholder="<?= lang('Auth.email') ?> value="<?php echo set_value('email');?>">
                             <div class="input-group-append">
                                 <div class="input-group-text">
                                     <span class="fas fa-envelope"></span>
@@ -72,12 +49,12 @@
                     <?php if ($config->allowRemembering) : ?>
                         <div class="row">
                             <div class="col-8">
-                                <div class="icheck-primary">
-                                    <input type="checkbox" name="remember" class="form-check-input" <?php if (old('remember')) : ?> checked <?php endif ?>>
-                                    <label for="remember">
-                                        <?= lang('Auth.rememberMe') ?>
-                                    </label>
-                                </div>
+                            <div class="form-check">
+							<label class="form-check-label">
+								<input type="checkbox" name="remember" class="form-check-input" <?php if (old('remember')) : ?> checked <?php endif ?>>
+								<?=lang('Auth.rememberMe')?>
+							</label>
+						</div>
                             </div>
                         <?php endif; ?>
 
@@ -101,9 +78,6 @@
             </div>
         </div>
     </div>
-
-    <!-- Tambahkan script SweetAlert2 untuk menampilkan pesan sukses -->
-
 
 </body>
     <?= $this->endSection(); ?>

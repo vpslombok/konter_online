@@ -26,7 +26,7 @@
                                         </li>
                                         <li class="list-group-item">
                                             <small>
-                                                <a href="<?= base_url('dashboard'); ?>">&laquo; Kembali</a>
+                                                <a href="<?= base_url('/'); ?>">&laquo; Kembali</a>
                                             </small>
                                         </li>
                                     </ul>
