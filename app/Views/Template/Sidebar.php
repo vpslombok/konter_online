@@ -23,7 +23,7 @@
             <div class="info">
                 <?php if (logged_in()) : ?>
                     <?php $user = user(); ?>
-                    <a href="<?= base_url('profile_setting'); ?>" class="d-block"><?= esc($user->username) ?></a>
+                    <a href="<?= base_url('my_profile'); ?>" class="d-block"><?= esc($user->username) ?></a>
 
                 <?php endif; ?>
             </div>

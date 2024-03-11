@@ -63,4 +63,52 @@ class User_managamen extends BaseController
 
         return redirect()->to('/user_managamen');
     }
+
+    public function add()
+{
+    $data['title'] = 'Add User';
+
+    // Load the groups from the auth_groups table
+    $db = \Config\Database::connect();
+    $builder = $db->table('auth_groups');
+    $builder->select('id, name');
+    $query = $builder->get();
+    $data['groups'] = $query->getResult();
+
+    // Validate and sanitize user input
+    $validation = \Config\Services::validation();
+    $validationRules = [
+        'username' => 'required|min_length[3]|max_length[20]|is_unique[users.username]',
+        'email' => 'required|valid_email|is_unique[users.email]',
+        'password' => 'required|min_length[8]',
+        'name' => 'required'
+    ];
+
+    if (!$this->validate($validationRules)) {
+        return redirect()->to('/user_managamen')->withInput()->with('validation', $validation);
+    }
+
+    // Insert user data into the users table
+    $users = new \Myth\Auth\Models\UserModel();
+    $data = [
+        'username' => $this->request->getPost('username'),
+        'email' => $this->request->getPost('email'),
+        'password' => $this->request->getPost('password'),
+        'name' => $this->request->getPost('name'),
+        'user_image' => 'default.jpg',
+        'active' => 1
+    ];
+    $users->save($data);
+
+    // Get the user ID of the newly created user
+    $user = $users->where('email', $this->request->getPost('email'))->first();
+
+    // Add the user to the selected group
+    $group = $this->request->getPost('group');
+    $users->addUserToGroup($user->id, $group);
+
+    // Redirect to the user management page
+    return redirect()->to('/user_managamen');
+}
+
 }

@@ -4,8 +4,8 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title><?php echo($title)  ?></title>
-    
+    <title><?php echo ($title)  ?></title>
+
     <!-- Google Font: Source Sans Pro -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
     <!-- Font Awesome -->
@@ -26,6 +26,11 @@
     <link rel="stylesheet" href="<?php echo base_url('assets') ?>/plugins/daterangepicker/daterangepicker.css">
     <!-- summernote -->
     <link rel="stylesheet" href="<?php echo base_url('assets') ?>/plugins/summernote/summernote-bs4.min.css">
+    <!-- Add these links in the head section -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.24/css/dataTables.bootstrap4.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
 </head>
 
 <body class="hold-transition sidebar-mini layout-fixed">
@@ -43,7 +48,7 @@
                 <li class="nav-item">
                     <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
                 </li>
-               
+
             </ul>
 
             <!-- Right navbar links -->
@@ -162,7 +167,7 @@
         </nav>
         <!-- /.navbar -->
 
-        
+
 
         <!-- Content Wrapper. Contains page content -->
         <div class="content-wrapper">
@@ -174,7 +179,7 @@
                             <h1 class="m-0"><?php echo ($title)  ?></h1>
                         </div><!-- /.col -->
                         <div class="col-sm-6">
-                           
+
                         </div><!-- /.col -->
                     </div><!-- /.row -->
                 </div><!-- /.container-fluid -->
