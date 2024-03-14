@@ -39,16 +39,25 @@
                                     <?php endif; ?>
                                 <td>
                                     <div class="card-footer">
-                                        <a href="<?= base_url('user_managamen/detail/' . $user->userid); ?>" class="btn btn-info">
-                                            <li class="fas fa-info-circle"></li> Detail
-                                        </a>
-                                        <button class="btn btn-warning" data-toggle="modal" data-target="#editModal<?= $user->userid; ?>">
-                                            <i class="fas fa-pen"></i> Edit
-                                        </button>
-                                        <button class="btn btn-danger" onclick="confirmDelete('<?= base_url('user_managamen/delete/' . $user->userid); ?>')">
-                                            <li class="fas fa-trash"></li> Delete
-                                        </button>
+                                        <div class="row">
+                                            <div class="col-sm-4 mb-2 mb-sm-0">
+                                                <a href="<?= base_url('user_managamen/detail/' . $user->userid); ?>" class="btn btn-info btn-block">
+                                                    <i class="fas fa-info-circle"></i>
+                                                </a>
+                                            </div>
+                                            <div class="col-sm-4 mb-2 mb-sm-0">
+                                                <button class="btn btn-warning btn-block" data-toggle="modal" data-target="#editModal<?= $user->userid; ?>">
+                                                    <i class="fas fa-pen"></i>
+                                                </button>
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <button class="btn btn-danger btn-block" onclick="confirmDelete('<?= base_url('user_managamen/delete/' . $user->userid); ?>')">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </div>
+                                        </div>
                                     </div>
+
                                 </td>
 
                             </tr>
