@@ -18,12 +18,13 @@
                                         <li class="list-group-item"><?= $user->email; ?></li>
                                         <li class="list-group-item"><?= isset($user->created_at) ? $user->created_at : 'Not Available'; ?></li>
                                         <li class="list-group-item">
-                                            <?php if ($user->active == 1) : ?>
-                                                Aktif
-                                            <?php else : ?>
-                                                Belum Aktif
-                                            <?php endif; ?>
+                                            <span class="badge <?php echo ($user->active == 1) ? 'badge-success' : 'badge-danger'; ?>">
+                                                <?php echo ($user->active == 1) ? 'Aktif' : 'Belum Aktif'; ?>
+                                            </span>
                                         </li>
+
+                                        </li>
+
                                         <li class="list-group-item">
                                             <small>
                                                 <a href="<?= base_url('/'); ?>">&laquo; Kembali</a>

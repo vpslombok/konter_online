@@ -3,20 +3,25 @@
 namespace App\Controllers\Admin;
 
 use App\Controllers\BaseController;
+use Myth\Auth\Password;
 
 class User_managamen extends BaseController
+
 {
+
+    protected $db, $builder;
+    public function __construct()
+    {
+        $this->db = \Config\Database::connect();
+        $this->builder = $this->db->table('users');
+    }
     public function index()
     {
         $data['title'] = 'User Managamen';
-        // $users = new \Myth\Auth\Models\UserModel();
-        // $data['users'] = $users->findAll();
-        $db = \Config\Database::connect();
-        $builder = $db->table('users');
-        $builder->select('users.id as userid, username, email, name');
-        $builder->join('auth_groups_users', 'auth_groups_users.user_id = users.id');
-        $builder->join('auth_groups', 'auth_groups.id = auth_groups_users.group_id');
-        $query = $builder->get();
+        $this->builder->select('users.id as userid, username, email, name, fullname, user_image, created_at, active, password_hash');
+        $this->builder->join('auth_groups_users', 'auth_groups_users.user_id = users.id');
+        $this->builder->join('auth_groups', 'auth_groups.id = auth_groups_users.group_id');
+        $query = $this->builder->get();
         $data['users'] = $query->getResult();
 
         echo view('Template/Header', $data);
@@ -27,13 +32,11 @@ class User_managamen extends BaseController
     public function detail($id = 0)
     {
         $data['title'] = 'User Detail';
-        $db = \Config\Database::connect();
-        $builder = $db->table('users');
-        $builder->select('users.id as userid, username, email, name, fullname, user_image, created_at, active');
-        $builder->join('auth_groups_users', 'auth_groups_users.user_id = users.id');
-        $builder->join('auth_groups', 'auth_groups.id = auth_groups_users.group_id');
-        $builder->where('users.id', $id);
-        $query = $builder->get();
+        $this->builder->select('users.id as userid, username, email, name, fullname, user_image, created_at, active');
+        $this->builder->join('auth_groups_users', 'auth_groups_users.user_id = users.id');
+        $this->builder->join('auth_groups', 'auth_groups.id = auth_groups_users.group_id');
+        $this->builder->where('users.id', $id);
+        $query = $this->builder->get();
         $data['user'] = $query->getRow();
 
         if (empty($data['user'])) {
@@ -47,19 +50,49 @@ class User_managamen extends BaseController
     }
     public function edit($id = 0)
     {
-        $db = \Config\Database::connect();
-        $builder = $db->table('users');
-        $builder->where('id', $id);
-        $builder->update($_POST);
+        $data['title'] = 'Edit User';
+        // Adjust select to match the existing columns
+        $this->builder->select('users.id as userid, username, email, fullname, user_image, created_at, active, auth_groups.name as role');
+        $this->builder->join('auth_groups_users', 'auth_groups_users.user_id = users.id');
+        $this->builder->join('auth_groups', 'auth_groups.id = auth_groups_users.group_id');
+        $this->builder->where('users.id', $id);
+        $query = $this->builder->get();
+        $data['user'] = $query->getRow();
+
+        $postData = [
+            'username' => $this->request->getPost('username'),
+            'fullname' => $this->request->getPost('fullname'),
+            'email' => $this->request->getPost('email'),
+            'active' => $this->request->getPost('active'),
+        ];
+
+        // Check if password is provided and not empty
+        $passwordInput = $this->request->getPost('password_hash');
+        if (!empty($passwordInput)) {
+            // Hash the password using Myth/Auth's Password class
+            $hashedPassword = Password::hash((string) $passwordInput);
+            $postData['password_hash'] = $hashedPassword;
+        }
+
+        // Retrieve the username from the query result
+        $username = $data['user']->username;
+
+        // Perform the update for other fields in the users table
+        $this->builder->where('id', $id);
+        $this->builder->update($postData);
+
+        // Set flash data message with the username of the edited user
+        session()->setFlashdata('pesan', "Data user dengan username $username berhasil diubah");
 
         return redirect()->to('/user_managamen');
     }
+
+
     public function delete($id = 0)
     {
-        $db = \Config\Database::connect();
-        $builder = $db->table('users');
-        $builder->where('id', $id);
-        $builder->delete();
+
+        $this->builder->where('id', $id);
+        $this->builder->delete();
 
         return redirect()->to('/user_managamen');
     }
@@ -67,48 +100,44 @@ class User_managamen extends BaseController
     public function add()
 {
     $data['title'] = 'Add User';
-
-    // Load the groups from the auth_groups table
-    $db = \Config\Database::connect();
-    $builder = $db->table('auth_groups');
-    $builder->select('id, name');
-    $query = $builder->get();
+    $this->builder->select('name');
+    $query = $this->db->table('auth_groups')->get();
     $data['groups'] = $query->getResult();
 
-    // Validate and sanitize user input
-    $validation = \Config\Services::validation();
+    // Validate form input
     $validationRules = [
-        'username' => 'required|min_length[3]|max_length[20]|is_unique[users.username]',
+        'username' => 'required|min_length[5]|max_length[255]|is_unique[users.username]',
+        'fullname' => 'required',
         'email' => 'required|valid_email|is_unique[users.email]',
-        'password' => 'required|min_length[8]',
-        'name' => 'required'
+        'password' => 'required|min_length[8]', // Add more complex validation if necessary
+        'active' => 'required|in_list[0,1]',
     ];
 
     if (!$this->validate($validationRules)) {
-        return redirect()->to('/user_managamen')->withInput()->with('validation', $validation);
+        // If validation fails, return to the form with errors
+        return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
     }
 
-    // Insert user data into the users table
-    $users = new \Myth\Auth\Models\UserModel();
-    $data = [
+    // Hash the password
+    $passwordInput = $this->request->getPost('password');
+    $hashedPassword = is_string($passwordInput) ? password_hash($passwordInput, PASSWORD_DEFAULT) : '';
+
+    // Prepare data for insertion
+    $userData = [
         'username' => $this->request->getPost('username'),
+        'fullname' => $this->request->getPost('fullname'),
         'email' => $this->request->getPost('email'),
-        'password' => $this->request->getPost('password'),
-        'name' => $this->request->getPost('name'),
-        'user_image' => 'default.jpg',
-        'active' => 1
+        'password_hash' => $hashedPassword,
+        'active' => $this->request->getPost('active'),
     ];
-    $users->save($data);
 
-    // Get the user ID of the newly created user
-    $user = $users->where('email', $this->request->getPost('email'))->first();
+    // Insert the user data
+    $this->builder->insert($userData);
 
-    // Add the user to the selected group
-    $group = $this->request->getPost('group');
-    $users->addUserToGroup($user->id, $group);
+    // Set flash message for success
+    session()->setFlashdata('pesan', 'Data user berhasil ditambahkan');
 
-    // Redirect to the user management page
-    return redirect()->to('/user_managamen');
+    return redirect()->to('/user_management');
 }
 
 }

@@ -5,7 +5,7 @@
             <div class="card-header">
                 <h3 class="card-title text-bold">User Managamen</h3>
             </div>
-            <div class="card-body" class="table-responsive">
+            <div class="table-responsive mx-auto mb-4">
                 <table id="datauser" class="table table-bordered table-striped datatable">
                     <!-- buatkan button tambah user -->
                     <button type="button" class="btn btn-sm btn-primary mb-2" data-toggle="modal" data-target="#addUser">
@@ -15,11 +15,12 @@
 
                     <thead>
                         <tr>
-                            <th>No</th>
-                            <th>Username</th>
-                            <th>Email</th>
-                            <th>Role</th>
-                            <th>Action</th>
+                            <th class="text-center" width="1%">No</th>
+                            <th class="text-center" width="3%">Username</th>
+                            <th class="text-center" width="10%">Email</th>
+                            <th class="text-center" width="1%">Role</th>
+                            <th class="text-center" width="1%">Status</th>
+                            <th class="text-center" width="10%">Action</th>
                         </tr>
                     </thead>
                     <tbody class="table-group-divider">
@@ -30,17 +31,26 @@
                                 <td><?= $user->username ?></td>
                                 <td><?= $user->email ?></td>
                                 <td><?= $user->name ?></td>
-                                <td class="text-center" width="25%">
-                                    <a href="<?= base_url('user_managamen/detail/' . $user->userid); ?>" class="btn btn-info">
-                                        <li class="fas fa-info-circle"> Detail</li>
-                                    </a>
-                                    <button class="btn btn-warning" data-toggle="modal" data-target="#editModal<?= $user->userid; ?>">
-                                        <i class="fas fa-pen"></i> Edit
-                                    </button>
-                                    <button class="btn btn-danger" onclick="confirmDelete('<?= base_url('user_managamen/delete/' . $user->userid); ?>')">
-                                        <li class="fas fa-trash"></li>Delete
-                                    </button>
+                                <td>
+                                    <?php if ($user->active == 1) : ?>
+                                        <span class="badge badge-success">Aktif</span>
+                                    <?php else : ?>
+                                        <span class="badge badge-danger">Tidak Aktif</span>
+                                    <?php endif; ?>
+                                <td>
+                                    <div class="card-footer">
+                                        <a href="<?= base_url('user_managamen/detail/' . $user->userid); ?>" class="btn btn-info">
+                                            <li class="fas fa-info-circle"></li> Detail
+                                        </a>
+                                        <button class="btn btn-warning" data-toggle="modal" data-target="#editModal<?= $user->userid; ?>">
+                                            <i class="fas fa-pen"></i> Edit
+                                        </button>
+                                        <button class="btn btn-danger" onclick="confirmDelete('<?= base_url('user_managamen/delete/' . $user->userid); ?>')">
+                                            <li class="fas fa-trash"></li> Delete
+                                        </button>
+                                    </div>
                                 </td>
+
                             </tr>
 
                             <!-- Modal for Edit -->
@@ -54,20 +64,21 @@
                                             </button>
                                         </div>
                                         <div class="modal-body">
-                                            <!-- Form for Edit goes here -->
-                                            <!-- Example: -->
                                             <form action="<?= base_url('user_managamen/edit/' . $user->userid); ?>" method="post" id="editForm<?= $user->userid; ?>">
                                                 <!-- Your form fields go here -->
-                                                <label for="newUsername">New Username:</label>
+                                                <label for="newUsername">Username:</label>
                                                 <input type="text" name="username" id="newUsername" class="form-control" value="<?= $user->username; ?>">
-                                                <label for="newEmail">New Email:</label>
+                                                <label for="newFullname">Nama Lengkap:</label>
+                                                <input type="text" name="fullname" id="newFullname" class="form-control" value="<?= $user->fullname; ?>">
+                                                <label for="newEmail">Email:</label>
                                                 <input type="email" name="email" id="newEmail" class="form-control" value="<?= $user->email; ?>">
-                                                <label for="newPassword">New Password:</label>
-                                                <input type="password" name="password" id="newPassword" class="form-control">
-                                                <label for="newRole">New Role:</label>
-                                                <select name="role" id="newRole" class="form-control">
-                                                    <option value="1" <?php if ($user->name == 'admin') echo 'selected'; ?>>Admin</option>
-                                                    <option value="2" <?php if ($user->name == 'user') echo 'selected'; ?>>User</option>
+                                                <label for="newPassword">Password:</label>
+                                                <input type="password" name="password_hash" id="newPassword" class="form-control">
+
+                                                <label for="activ">Status:</label>
+                                                <select name="active" id="active" class="form-control">
+                                                    <option value="1" <?php if ($user->active == 1) echo 'selected'; ?>>Aktif</option>
+                                                    <option value="0" <?php if ($user->active == 0) echo 'selected'; ?>>Tidak Aktif</option>
                                                 </select>
 
                                                 <!-- Add other fields as needed -->
@@ -100,32 +111,21 @@
                                                     <input type="text" class="form-control" id="fullname" name="fullname" placeholder="Masukkan nama lengkap">
                                                 </div>
                                                 <div class="form-group
-                                                <label for="email">Email</label>
+                                                <label for=" email">Email</label>
                                                     <input type="email" class="form-control" id="email" name="email" placeholder="Masukkan Email">
                                                 </div>
                                                 <div class="form-group">
-                                                <label for="password">Password</label>
-                                                    <input type="password" class="form-control" id="password" name="password" placeholder="Masukkan Password">
-                                                </div>
-                                                <div class="form-group">
-                                                <label for="role">Role</label>
-                                                    <select class="form-control" id="role" name="role">
-                                                        <option value="1">Admin</option>
-                                                        <option value="2">User</option>
-                                                    </select>
-                                                </div>
-                                                <div class="form-group">
-                                                <label for="user_image">Foto Profil</label>
-                                                    <input type="file" class="form-control" id="user_image" name="user_image">
+                                                    <label for="password">Password</label>
+                                                    <input type="password" class="form-control" id="password" name="password_hash" placeholder="Masukkan Password">
                                                 </div>
                                                 <div class="form-group
-                                                <label for="active">Status</label>
+                                                <label for=" active">Status</label>
                                                     <select class="form-control" id="active" name="active">
                                                         <option value="1">Aktif</option>
                                                         <option value="0">Tidak Aktif</option>
                                                     </select>
                                                 </div>
-                                                
+
                                                 <button type="submit" class="btn btn-primary">Tambah</button>
                                             </form>
                                         </div>
@@ -157,7 +157,7 @@
         });
     }
 
-    // SweetAlert for Edit
+    // sweet alert edit user
     <?php foreach ($users as $user) : ?>
         $('#editForm<?= $user->userid; ?>').submit(function(e) {
             e.preventDefault();
@@ -178,3 +178,15 @@
         });
     <?php endforeach; ?>
 </script>
+
+<!-- sweet alert edit success dengan menampilkan nama user yang di edit -->
+
+<?php if (session()->getFlashdata('pesan')) : ?>
+    <script>
+        Swal.fire({
+            title: 'Berhasil!',
+            text: "<?= session()->getFlashdata('pesan'); ?>",
+            icon: 'success'
+        });
+    </script>
+<?php endif; ?>

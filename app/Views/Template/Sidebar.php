@@ -1,7 +1,7 @@
 <!-- Main Sidebar Container -->
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
-    <a href="index3.html" class="brand-link">
+    <a href="<?= base_url('/'); ?>" class="brand-link">
         <img src="<?php echo base_url('assets') ?>/dist/img/AdminLTELogo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
         <span class="brand-text font-weight-light"><?php echo ($title)  ?></span>
     </a>
@@ -10,15 +10,11 @@
     <div class="sidebar">
         <!-- Sidebar user panel (optional) -->
         <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+        <?php $user = user(); ?>
             <div class="image">
-                <?php if (!empty($user->user_image)) : ?>
-                    <?php $imagePath = base_url('assets/img/') . esc($user->user_image); ?>
-                    <img src="<?= $imagePath ?>" class="img-circle elevation-2" alt="User Image">
-                <?php else : ?>
-                    <!-- Jika tidak ada gambar, Anda bisa menampilkan gambar default atau pesan lainnya -->
-                    <img src="<?= base_url('assets/img/default.svg') ?>" class="img-circle elevation-2" alt="Default Image">
-                <?php endif; ?>
+                <img src="<?php echo base_url('assets') ?>/img/<?= esc($user->user_image) ?>" class="img-circle elevation-2" alt="User Image">
             </div>
+            
 
             <div class="info">
                 <?php if (logged_in()) : ?>
@@ -40,12 +36,13 @@
                 </div>
             </div>
         </div>
+
         <!-- Sidebar Menu -->
         <nav class="mt">
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                 <!-- Add icons to the links using the .nav-icon class
                      with font-awesome or any other icon font library -->
-                <<?php if (in_groups('admin')) : ?> <li class="nav-header">Admin Menu</li>
+                <?php if (in_groups('admin')) : ?> <li class="nav-header">Admin Menu</li>
                     <li class="nav-item">
                         <a href="<?= base_url('user_managamen'); ?>" class="nav-link">
                             <i class="nav-icon fas fa-users"></i>
