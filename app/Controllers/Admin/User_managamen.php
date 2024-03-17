@@ -3,7 +3,9 @@
 namespace App\Controllers\Admin;
 
 use App\Controllers\BaseController;
+use Myth\Auth\Models\UserModel;
 use Myth\Auth\Password;
+
 
 class User_managamen extends BaseController
 
@@ -48,44 +50,40 @@ class User_managamen extends BaseController
         echo view('Admin/Detail', $data);
         echo view('Template/Footer');
     }
-    public function edit($id = 0)
+    public function edit($id)
     {
-        $data['title'] = 'Edit User';
-        // Adjust select to match the existing columns
-        $this->builder->select('users.id as userid, username, email, fullname, user_image, created_at, active, auth_groups.name as role');
+       $this->builder->select('users.id as userid, username, email, name, fullname, user_image, created_at, active');
         $this->builder->join('auth_groups_users', 'auth_groups_users.user_id = users.id');
         $this->builder->join('auth_groups', 'auth_groups.id = auth_groups_users.group_id');
         $this->builder->where('users.id', $id);
         $query = $this->builder->get();
         $data['user'] = $query->getRow();
 
-        $postData = [
-            'username' => $this->request->getPost('username'),
-            'fullname' => $this->request->getPost('fullname'),
-            'email' => $this->request->getPost('email'),
-            'active' => $this->request->getPost('active'),
-        ];
-
-        // Check if password is provided and not empty
-        $passwordInput = $this->request->getPost('password_hash');
-        if (!empty($passwordInput)) {
-            // Hash the password using Myth/Auth's Password class
-            $hashedPassword = Password::hash((string) $passwordInput);
-            $postData['password_hash'] = $hashedPassword;
+        if (empty($data['user'])) {
+            return redirect()->to('/user_managamen');
         }
 
-        // Retrieve the username from the query result
-        $username = $data['user']->username;
+        $data = [
+            'username' => $this->request->getVar('username'),
+            'fullname' => $this->request->getVar('fullname'),
+            'email' => $this->request->getVar('email'),
+            'active' => $this->request->getVar('active'),
+        ];
 
-        // Perform the update for other fields in the users table
+        if (!empty($this->request->getVar('password_hash'))) {
+            $data['password_hash'] = Password::hash($this->request->getVar('password_hash'));
+        }
+
         $this->builder->where('id', $id);
-        $this->builder->update($postData);
+        $this->builder->update($data);
 
-        // Set flash data message with the username of the edited user
-        session()->setFlashdata('pesan', "Data user dengan username $username berhasil diubah");
+        $username = $data['username'];
 
+        // Set flash message for success
+        session()->setFlashdata('pesan', "Data $username berhasil diubah");
         return redirect()->to('/user_managamen');
     }
+
 
 
     public function delete($id = 0)
@@ -94,50 +92,26 @@ class User_managamen extends BaseController
         $this->builder->where('id', $id);
         $this->builder->delete();
 
+        // Set flash message for success
+        session()->setFlashdata('pesan', "Data berhasil dihapus");
         return redirect()->to('/user_managamen');
     }
 
     public function add()
-{
-    $data['title'] = 'Add User';
-    $this->builder->select('name');
-    $query = $this->db->table('auth_groups')->get();
-    $data['groups'] = $query->getResult();
+    {
 
-    // Validate form input
-    $validationRules = [
-        'username' => 'required|min_length[5]|max_length[255]|is_unique[users.username]',
-        'fullname' => 'required',
-        'email' => 'required|valid_email|is_unique[users.email]',
-        'password' => 'required|min_length[8]', // Add more complex validation if necessary
-        'active' => 'required|in_list[0,1]',
-    ];
+        $user_myth = new UserModel();
+        $user_myth->withGroup($this->request->getVar('role'))->save([
+            'username' => $this->request->getVar('username'),
+            'fullname' => $this->request->getVar('fullname'),
+            'email' => $this->request->getVar('email'),
+            'password_hash' => Password::hash($this->request->getVar('password_hash')),
+            'active' => $this->request->getVar('active'),
+        ]);
 
-    if (!$this->validate($validationRules)) {
-        // If validation fails, return to the form with errors
-        return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+
+        // Set flash message for success
+        session()->setFlashdata('pesan', 'Data user berhasil ditambahkan');
+        return redirect()->to('/user_managamen');
     }
-
-    // Hash the password
-    $passwordInput = $this->request->getPost('password');
-    $hashedPassword = is_string($passwordInput) ? password_hash($passwordInput, PASSWORD_DEFAULT) : '';
-
-    // Prepare data for insertion
-    $userData = [
-        'username' => $this->request->getPost('username'),
-        'fullname' => $this->request->getPost('fullname'),
-        'email' => $this->request->getPost('email'),
-        'password_hash' => $hashedPassword,
-        'active' => $this->request->getPost('active'),
-    ];
-
-    // Insert the user data
-    $this->builder->insert($userData);
-
-    // Set flash message for success
-    session()->setFlashdata('pesan', 'Data user berhasil ditambahkan');
-
-    return redirect()->to('/user_management');
-}
-
 }

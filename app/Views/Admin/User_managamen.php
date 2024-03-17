@@ -3,10 +3,11 @@
     <div class="container-fluid">
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title text-bold">User Managamen</h3>
+                <h3 class="card-title">DataTable with default features</h3>
             </div>
-            <div class="table-responsive mx-auto mb-4">
-                <table id="datauser" class="table table-bordered table-striped datatable">
+
+            <div class="card-body">
+                <table id="datauser" class="table table-bordered table-striped">
                     <!-- buatkan button tambah user -->
                     <button type="button" class="btn btn-sm btn-primary mb-2" data-toggle="modal" data-target="#addUser">
                         <li class="fa fa-plus"></li>
@@ -15,15 +16,15 @@
 
                     <thead>
                         <tr>
-                            <th class="text-center" width="1%">No</th>
-                            <th class="text-center" width="3%">Username</th>
-                            <th class="text-center" width="10%">Email</th>
-                            <th class="text-center" width="1%">Role</th>
-                            <th class="text-center" width="1%">Status</th>
-                            <th class="text-center" width="10%">Action</th>
+                            <th class="text-center">No</th>
+                            <th class="text-center">Username</th>
+                            <th class="text-center">Email</th>
+                            <th class="text-center">Role</th>
+                            <th class="text-center">Status</th>
+                            <th class="text-center">Action</th>
                         </tr>
                     </thead>
-                    <tbody class="table-group-divider">
+                    <tbody>
                         <?php $i = 1; ?>
                         <?php foreach ($users as $user) : ?>
                             <tr>
@@ -38,25 +39,10 @@
                                         <span class="badge badge-danger">Tidak Aktif</span>
                                     <?php endif; ?>
                                 <td>
-                                    <div class="card-footer">
-                                        <div class="row">
-                                            <div class="col-sm-4 mb-2 mb-sm-0">
-                                                <a href="<?= base_url('user_managamen/detail/' . $user->userid); ?>" class="btn btn-info btn-block">
-                                                    <i class="fas fa-info-circle"></i>
-                                                </a>
-                                            </div>
-                                            <div class="col-sm-4 mb-2 mb-sm-0">
-                                                <button class="btn btn-warning btn-block" data-toggle="modal" data-target="#editModal<?= $user->userid; ?>">
-                                                    <i class="fas fa-pen"></i>
-                                                </button>
-                                            </div>
-                                            <div class="col-sm-4">
-                                                <button class="btn btn-danger btn-block" onclick="confirmDelete('<?= base_url('user_managamen/delete/' . $user->userid); ?>')">
-                                                    <i class="fas fa-trash"></i>
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    <a href="<?= base_url('user_managamen/detail/' . $user->userid); ?>" class="btn btn-sm btn-info">Detail</a>
+                                    <button type="button" class="btn btn-sm btn-warning" data-toggle="modal" data-target="#editModal<?= $user->userid; ?>">Edit</button>
+                                    <a href="<?= base_url('user_managamen/delete/' . $user->userid); ?>" class="btn btn-sm btn-danger" onclick="confirmDelete('<?= base_url('user_managamen/delete/' . $user->userid); ?>')">Delete</a>
+                                     
 
                                 </td>
 
@@ -83,7 +69,7 @@
                                                 <input type="email" name="email" id="newEmail" class="form-control" value="<?= $user->email; ?>">
                                                 <label for="newPassword">Password:</label>
                                                 <input type="password" name="password_hash" id="newPassword" class="form-control">
-
+                                                
                                                 <label for="activ">Status:</label>
                                                 <select name="active" id="active" class="form-control">
                                                     <option value="1" <?php if ($user->active == 1) echo 'selected'; ?>>Aktif</option>
@@ -126,6 +112,13 @@
                                                 <div class="form-group">
                                                     <label for="password">Password</label>
                                                     <input type="password" class="form-control" id="password" name="password_hash" placeholder="Masukkan Password">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="role">Role</label>
+                                                    <select class="form-control" id="role" name="role">
+                                                        <option value="admin">Admin</option>
+                                                        <option value="user">User</option>
+                                                    </select>
                                                 </div>
                                                 <div class="form-group
                                                 <label for=" active">Status</label>
